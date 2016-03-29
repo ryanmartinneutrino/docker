@@ -23,3 +23,6 @@ RUN cmake --build . --target install
 
 #Copy the ROOT C++ kernel over:
 RUN cp -r /usr/local/root/etc/notebook/kernels/root /usr/local/share/jupyter/kernels/.
+
+#Apparently required for the ROOT C++ kernel
+RUN pip2 install metakernel
