@@ -1,11 +1,23 @@
 #!/bin/bash
 set -e
+
+GID=385
+GNAME='sno-news'
+
+if getent group $GID > /dev/null; then
+  echo "group $GNAME already exists"
+else
+  groupadd -g $GID $GNAME
+fi
+
 if getent passwd $USER_ID > /dev/null ; then
   echo "$USER ($USER_ID) exists"
 else
   echo "Creating user $USER ($USER_ID)"
-  useradd -u $USER_ID -s $SHELL $USER
+  useradd -u $USER_ID -s $SHELL -g $GID $USER
 fi
+
+
 sudo -E PATH="${CONDA_DIR}/bin:$PATH" -u $USER bash -c 'jupyterhub-singleuser \
   --port=8888 \
   --ip=0.0.0.0 \

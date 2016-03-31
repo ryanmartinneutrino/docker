@@ -16,7 +16,9 @@ else
   echo "Creating user $USER ($USER_ID)"
   useradd -u $USER_ID -s $SHELL -g $GID $USER
 fi
-sudo -E PATH="${CONDA_DIR}/bin:$PATH" -u $USER bash -c 'source /usr/local/bin/thisroot.sh && jupyterhub-singleuser \
+
+
+sudo -E PATH="${CONDA_DIR}/bin:$PATH"  -u $USER bash -c 'source /usr/local/scripts/setup_env.sh && jupyterhub-singleuser \
   --port=8888 \
   --ip=0.0.0.0 \
   --user=$JPY_USER \

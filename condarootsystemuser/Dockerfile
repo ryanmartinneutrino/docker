@@ -3,15 +3,13 @@
 #The systemuser.sh scrip will source thisroot.sh as the system user that  is creates
 
 
-FROM ryanmartinneutrino/pythonroot 
+FROM ryanmartinneutrino/conda4root 
 
 MAINTAINER Ryan Martin
 
 USER root
 
 EXPOSE 8888
-
-RUN pip install ipywidgets
 
 ENV SHELL /bin/bash
 RUN wget -q https://raw.githubusercontent.com/jupyter/jupyterhub/master/scripts/jupyterhub-singleuser -O /usr/local/bin/jupyterhub-singleuser
