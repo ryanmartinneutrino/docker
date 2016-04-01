@@ -27,7 +27,7 @@ RUN /bin/bash -c "source /usr/local/scripts/setup_env.sh && cmake -Dhttp:BOOL=ON
 RUN /bin/bash -c "source /usr/local/scripts/setup_env.sh && cmake --build . --target install"
 
 #Apparently required for the ROOT C++ kernel
-RUN  /bin/bash -c "source /usr/local/scripts/setup_env.sh &&conda install -c https://conda.anaconda.org/ioos metakernel
+#RUN  /bin/bash -c "source /usr/local/scripts/setup_env.sh &&conda install -c https://conda.anaconda.org/ioos metakernel
 
 #Apparently required for the ROOT C++ kernel
 RUN  /bin/bash -c "source /usr/local/scripts/setup_env.sh \
