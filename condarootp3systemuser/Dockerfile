@@ -16,5 +16,6 @@ RUN wget -q https://raw.githubusercontent.com/jupyter/jupyterhub/master/scripts/
 RUN chmod 755 /usr/local/bin/jupyterhub-singleuser
 
 ADD systemuser.sh /srv/singleuser/systemuser.sh
+ENV CONDA_DIR /usr/local/conda
 
 CMD ["sh", "/srv/singleuser/systemuser.sh"]
