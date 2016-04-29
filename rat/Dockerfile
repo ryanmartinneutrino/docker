@@ -4,7 +4,10 @@
 #be in the same directory as the Dockerfile (so that we can avoid
 #putting ssh keys in the Dockerfile)
 #User is root with password root (it's obvious where to change that)
+#Build from same directory as docker file: docker build -t ryanmartinneutrino/rat:v1 .  
 #Start with: docker run -d -P --name rat_docker ryanmartinneutrino/rat:v1
+#Use docker ps -a to figure out the port and then ssh with: ssh -X root@localhost -p 32451 
+#(or whatever the port is)
 #####################################
 
 
