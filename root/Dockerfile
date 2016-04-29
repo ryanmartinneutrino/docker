@@ -1,4 +1,5 @@
-FROM ubuntu:16.04
+#trusy = 14.04
+FROM ubuntu:trusty
 
 MAINTAINER Ryan Martin
 
