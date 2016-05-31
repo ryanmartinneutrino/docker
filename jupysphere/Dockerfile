@@ -186,4 +186,14 @@ COPY systemuser.sh /srv/singleuser/systemuser.sh
 
 ENV CONDA_DIR /usr/local/conda
 
+#v2 (install pymongo, update anaconda and pip):
+RUN /bin/bash -c "source /usr/local/scripts/setup_env.sh \
+    && source activate root \ 
+    && conda update -y anaconda \
+    && pip install --upgrade pip \
+    && pip install pymongo \
+    && source activate python2 \
+    && pip install --upgrade pip \
+    && pip install pymongo"
+
 CMD ["sh", "/srv/singleuser/systemuser.sh"]
