@@ -133,7 +133,7 @@ RUN /usr/local/conda/envs/python2/bin/python -m ipykernel install
 
 #Make sure to source this when running the container:
 RUN mkdir -p /usr/local/scripts
-COPY setup_env.sh /usr/local/scripts/.
+COPY setup_conda.sh /usr/local/scripts/.
 
 ENTRYPOINT ["tini", "--"]
 
@@ -150,17 +150,17 @@ RUN git clone http://root.cern.ch/git/root.git \
 WORKDIR /usr/local/root
 ENV SHELL /bin/bash
 
-RUN /bin/bash -c "source /usr/local/scripts/setup_env.sh && cmake -Dhttp:BOOL=ON \
+RUN /bin/bash -c "source /usr/local/scripts/setup_conda.sh && cmake -Dhttp:BOOL=ON \
   -DPYTHON_EXECUTABLE:FILEPATH=/usr/local/conda/envs/python2/bin/python \
   -DPYTHON_INCLUDE_DIR:PATH=/usr/local/conda/envs/python2/include \
   -DPYTHON_LIBRARY:FILEPATH=/usr/local/conda/envs/python2/lib/libpython2.7.so \
  /usr/local/src/root" 
 
 #Build and install
-RUN /bin/bash -c "source /usr/local/scripts/setup_env.sh && cmake --build . --target install"
+RUN /bin/bash -c "source /usr/local/scripts/setup_conda.sh && cmake --build . --target install"
 
 #Apparently required for the ROOT C++ kernel
-RUN  /bin/bash -c "source /usr/local/scripts/setup_env.sh \
+RUN  /bin/bash -c "source /usr/local/scripts/setup_conda.sh \
      && conda install --yes pip \
      && pip install metakernel \
      && source activate root \
@@ -172,28 +172,35 @@ RUN  /bin/bash -c "source /usr/local/scripts/setup_env.sh \
 #Copy the ROOT C++ kernel over:
 RUN cp -r /usr/local/root/etc/notebook/kernels/root /usr/local/share/jupyter/kernels/.
 
-#Add the jupyterhub-single user to run this as with dockerspawner from Jupyterhub
-#Runs the notebook server as a user from the host, with home directory mounted.
-#The systemuser.sh scrip will source thisroot.sh as the system user that  is creates
-
+#Internal spawned instance port for connection
 EXPOSE 8888
-
-ENV SHELL /bin/bash
-RUN wget -q https://raw.githubusercontent.com/jupyter/jupyterhub/master/scripts/jupyterhub-singleuser -O /usr/local/bin/jupyterhub-singleuser
-RUN chmod 755 /usr/local/bin/jupyterhub-singleuser
-
-COPY systemuser.sh /srv/singleuser/systemuser.sh
 
 ENV CONDA_DIR /usr/local/conda
 
-#v2 (install pymongo, update anaconda and pip):
-RUN /bin/bash -c "source /usr/local/scripts/setup_env.sh \
+#v4 (install pymongo, update anaconda and pip):
+RUN /bin/bash -c "source /usr/local/scripts/setup_conda.sh \
     && source activate root \ 
-    && conda update -y anaconda \
+    && conda update -y --all \
     && pip install --upgrade pip \
     && pip install pymongo \
+    && pip install pywavelets \
     && source activate python2 \
+    && conda update -y --all \
     && pip install --upgrade pip \
+    && pip install pywavelets \
     && pip install pymongo"
 
+
+#Add the jupyterhub-single user to run this as with dockerspawner from Jupyterhub (from their single-user instance)
+#CHECK IF THIS NEEDS UPDATING...
+#Runs the notebook server as a user from the host, with home directory mounted.
+#The systemuser.sh scrip will source thisroot.sh as the system user that  is creates
+ENV SHELL /bin/bash
+RUN wget -q https://raw.githubusercontent.com/jupyterhub/jupyterhub/0.6.1/scripts/jupyterhub-singleuser -O /usr/local/bin/jupyterhub-singleuser && \
+    chmod 755 /usr/local/bin/jupyterhub-singleuser
+
+#startup script at the end, so that we don't recompile everything when we modify it...
+COPY setup_env.sh /usr/local/scripts/.
+
+COPY systemuser.sh /srv/singleuser/systemuser.sh
 CMD ["sh", "/srv/singleuser/systemuser.sh"]
